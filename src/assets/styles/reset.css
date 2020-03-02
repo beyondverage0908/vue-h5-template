@@ -1,0 +1,56 @@
+* {
+    margin: 0;
+    padding: 0;
+    max-height: 999999px;
+}
+
+*,
+*:before,
+*:after {
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+html {
+    line-height: 1.15; /* 1 */
+    -webkit-text-size-adjust: 100%; /* 2 */
+}
+
+body {
+    color: #333;
+    line-height: 1.4;
+    font-family: 'Segoe UI', 'Lucida Grande', Helvetica, Arial, 'Microsoft YaHei', FreeSans, Arimo,
+        'Droid Sans', 'wenquanyi micro hei', 'Hiragino Sans GB', 'Hiragino Sans GB W3', Arial,
+        sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+img {
+    vertical-align: middle;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+button {
+    -webkit-tap-highlight-color: transparent;
+}
+
+ul,
+li {
+    list-style: none;
+}
+
+input,
+textarea,
+button,
+select,
+a {
+    outline: 0 none;
+    border: none;
+    -webkit-tap-highlight-color: transparent;
+}

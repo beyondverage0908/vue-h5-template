@@ -1,0 +1,251 @@
+@mixin center($width: null, $height: null) {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+
+    @if not $width and not $height {
+        transform: translate(-50%, -50%);
+    } @else if $width and $height {
+        width: $width;
+        height: $height;
+        margin: -($height / 2) #{0 0} - ($width / 2);
+    } @else if not $height {
+        width: $width;
+        margin-left: -($width / 2);
+        transform: translateY(-50%);
+    } @else {
+        height: $height;
+        margin-top: -($height / 2);
+        transform: translateX(-50%);
+    }
+}
+
+// 单行超出省略号
+// @include ell
+@mixin ell() {
+    //
+    overflow: hidden;
+    -ms-text-overflow: ellipsis;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+//多行超出省略号
+// @include ells(2)
+@mixin ells($line-clamp: 2) {
+    word-break: break-all;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: $line-clamp;
+    overflow: hidden;
+}
+
+//.arrow{
+// @include arrow(bottom,10px,#F00);
+//
+@mixin arrow($direction, $size, $color) {
+    width: 0;
+    height: 0;
+    line-height: 0;
+    font-size: 0;
+    overflow: hidden;
+    border-width: $size;
+    cursor: pointer;
+
+    @if $direction==top {
+        border-style: dashed dashed solid dashed;
+        border-color: transparent transparent $color transparent;
+        border-top: none;
+    } @else if $direction==bottom {
+        border-style: solid dashed dashed dashed;
+        border-color: $color transparent transparent transparent;
+        border-bottom: none;
+    } @else if $direction==right {
+        border-style: dashed dashed dashed solid;
+        border-color: transparent transparent transparent $color;
+        border-right: none;
+    } @else if $direction==left {
+        border-style: dashed solid dashed dashed;
+        border-color: transparent $color transparent transparent;
+        border-left: none;
+    }
+}
+
+// clearfix
+@mixin clr {
+    &:before,
+    &:after {
+        display: table; // bfc&块,防止margin重叠
+        content: ' ';
+    }
+    &:after {
+        clear: both;
+    }
+}
+
+/* 定义滚动条样式 圆角和阴影不需要则传入null */
+@mixin scrollBar(
+    $width: 10px,
+    $height: 10px,
+    $outColor: $bgColor,
+    $innerColor: $bgGrey,
+    $radius: 5px,
+    $shadow: null
+) {
+    /*定义滚动条高宽及背景 高宽分别对应横竖滚动条的尺寸*/
+    &::-webkit-scrollbar {
+        width: $width;
+        height: $height;
+        background-color: $outColor;
+        @if ($radius !=null) {
+            border-radius: $radius;
+        }
+    }
+
+    /*定义滚动条轨道 内阴影+圆角*/
+    &::-webkit-scrollbar-track {
+        @if ($shadow !=null) {
+            -webkit-box-shadow: $shadow;
+        }
+
+        @if ($radius !=null) {
+            border-radius: $radius;
+        }
+
+        background-color: $outColor;
+    }
+
+    /*定义滑块 内阴影+圆角*/
+    &::-webkit-scrollbar-thumb {
+        @if ($shadow !=null) {
+            -webkit-box-shadow: $shadow;
+        }
+
+        @if ($radius !=null) {
+            border-radius: $radius;
+        }
+
+        background-color: $innerColor;
+        border: 1px solid $innerColor;
+    }
+}
+
+// 1px边框
+@mixin thinBorder(
+    $directionMaps: bottom,
+    $color: #ccc,
+    $radius: (
+        0,
+        0,
+        0,
+        0
+    ),
+    $position: after
+) {
+    // 是否只有一个方向
+    $isOnlyOneDir: string==type-of($directionMaps);
+
+    @if ($isOnlyOneDir) {
+        $directionMaps: ($directionMaps);
+    }
+
+    @each $directionMap in $directionMaps {
+        border-#{$directionMap}: 1px solid $color; /*no*/
+    }
+
+    // 判断圆角是list还是number
+    @if (list==type-of($radius)) {
+        border-radius: nth($radius, 1) nth($radius, 2) nth($radius, 3) nth($radius, 4); /*no*/
+    } @else {
+        border-radius: $radius; /*no*/
+    }
+
+    @media only screen and (-webkit-min-device-pixel-ratio: 2) {
+        & {
+            position: relative;
+
+            // 删除1像素密度比下的边框
+            @each $directionMap in $directionMaps {
+                border-#{$directionMap}: none;
+            }
+        }
+
+        &:#{$position} {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            display: block;
+            width: 200%;
+            height: 200%;
+            transform: scale(0.5);
+            box-sizing: border-box;
+            padding: 1px; /*no*/
+            transform-origin: 0 0;
+            pointer-events: none;
+            border: 0 solid $color;
+            @each $directionMap in $directionMaps {
+                border-#{$directionMap}-width: 1px; /*no*/
+            }
+
+            // 判断圆角是list还是number
+            @if (list==type-of($radius)) {
+                border-radius: nth($radius, 1) *
+                    2
+                    nth($radius, 2) *
+                    2
+                    nth($radius, 3) *
+                    2
+                    nth($radius, 4) *
+                    2; /*no*/
+            } @else {
+                border-radius: $radius * 2; /*no*/
+            }
+        }
+    }
+
+    @media only screen and (-webkit-min-device-pixel-ratio: 3) {
+        &:#{$position} {
+            // 判断圆角是list还是number
+            @if (list==type-of($radius)) {
+                border-radius: nth($radius, 1) *
+                    3
+                    nth($radius, 2) *
+                    3
+                    nth($radius, 3) *
+                    3
+                    nth($radius, 4) *
+                    3; /*no*/
+            } @else {
+                border-radius: $radius * 3; /*no*/
+            }
+
+            width: 300%;
+            height: 300%;
+            transform: scale(0.3333);
+        }
+    }
+}
+
+@mixin border-top-1px($color: #ccc) {
+    @include thinBorder(top, $color, 0);
+}
+@mixin border-right-1px($color: #ccc) {
+    @include thinBorder(right, $color, 0);
+}
+@mixin border-bottom-1px($color: #ccc) {
+    @include thinBorder(bottom, $color, 0);
+}
+@mixin border-left-1px($color: #ccc) {
+    @include thinBorder(left, $color, 0);
+}
+@mixin border-horizontal-1px($color: #ccc) {
+    @include thinBorder((left, right), $color, 0);
+}
+@mixin border-vertical-1px($color: #ccc) {
+    @include thinBorder((top, bottom), $color, 0);
+}
+@mixin border-1px($color: #ccc, $radius: 0) {
+    @include thinBorder((top, bottom, left, right), $color, $radius);
+}
